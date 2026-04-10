@@ -24,6 +24,32 @@
   color: #414868;
 }
 
+/* Template popup styles (popup/template example) */
+.room-popup {
+  background: #1e1e2e;
+  border: 1px solid #3a3a5c;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 160px;
+  font-family: var(--vp-font-family-base);
+  pointer-events: none;
+}
+.room-popup__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c0caf5;
+  margin-bottom: 4px;
+}
+.room-popup__desc {
+  font-size: 12px;
+  color: #6c7086;
+}
+.room-popup__floor {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #414868;
+}
+
 /* Target popup styles */
 .target-popup {
   font-family: var(--vp-font-family-base);
