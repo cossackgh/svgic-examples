@@ -24,6 +24,28 @@
   color: #414868;
 }
 
+/* Target popup styles */
+.target-popup {
+  font-family: var(--vp-font-family-base);
+}
+.target-popup__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  margin-bottom: 6px;
+}
+.target-popup__desc {
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  margin-bottom: 12px;
+}
+.target-popup__floor {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vp-c-text-3);
+}
+
 /* Demo container — wraps every live example */
 .demo-block {
   border: 1px solid var(--vp-c-divider);
