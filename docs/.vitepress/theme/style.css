@@ -1,3 +1,29 @@
+/* Custom popup styles used in popup examples */
+.svgic-custom-popup {
+  background: #1e1e2e;
+  border: 1px solid #3a3a5c;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 160px;
+  font-family: var(--vp-font-family-base);
+  pointer-events: none;
+}
+.svgic-custom-popup__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c0caf5;
+  margin-bottom: 4px;
+}
+.svgic-custom-popup__desc {
+  font-size: 12px;
+  color: #6c7086;
+}
+.svgic-custom-popup__floor {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #414868;
+}
+
 /* Demo container — wraps every live example */
 .demo-block {
   border: 1px solid var(--vp-c-divider);
