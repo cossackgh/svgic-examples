@@ -85,7 +85,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public  ← too broad, conflicts with docs/public
 
 # Vuepress build output
 .vuepress/dist
@@ -147,6 +147,9 @@ logs
 build/
 dist/
 lib/
+
+# VitePress cache
+docs/.vitepress/cache/
 
 # Temporary folders
 tmp/

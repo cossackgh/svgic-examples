@@ -1,0 +1,31 @@
+/* Demo container — wraps every live example */
+.demo-block {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 24px 0;
+}
+
+.demo-block__preview {
+  padding: 24px;
+  background: var(--vp-c-bg-soft);
+}
+
+.demo-block__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+  padding: 6px 16px;
+  border-top: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+}
+
+/* Default svgic container size in demos */
+.demo-svgic {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 4px;
+  overflow: hidden;
+}

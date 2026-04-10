@@ -1,25 +1,32 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
-  name: "Svgic examples"
-  text: "Interactive SVG client examples"
-  tagline: My great project tagline
+  name: "Svgic"
+  text: "Interactive SVG client"
+  tagline: Embed SVG, bind data, handle events — vanilla JS, Vue 3, React
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Getting Started
+      link: /getting-started
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Examples
+      link: /examples/basic
+    - theme: alt
+      text: Library →
+      link: https://github.com/cossackgh/client-svg-schemas
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: Data Binding
+    details: Bind any data to SVG elements by ID. Update reactively via setData().
+  - title: Events
+    details: click, hover, leave — with element ID and bound data item.
+  - title: Popup
+    details: Built-in hover/click popups — cursor, element-anchored, or target panel.
+  - title: Styling & Highlight
+    details: Declarative styles for default, hover, and named states. setHighlight() for groups.
+  - title: Plugins
+    details: ZoomPlugin, DebugPlugin, or write your own with lifecycle hooks.
+  - title: Framework Adapters
+    details: Native components and composables for Vue 3 and React.
 ---
-
