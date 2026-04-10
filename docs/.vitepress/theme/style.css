@@ -1,0 +1,105 @@
+/* Custom popup styles used in popup examples */
+.svgic-custom-popup {
+  background: #1e1e2e;
+  border: 1px solid #3a3a5c;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 160px;
+  font-family: var(--vp-font-family-base);
+  pointer-events: none;
+}
+.svgic-custom-popup__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c0caf5;
+  margin-bottom: 4px;
+}
+.svgic-custom-popup__desc {
+  font-size: 12px;
+  color: #6c7086;
+}
+.svgic-custom-popup__floor {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #414868;
+}
+
+/* Template popup styles (popup/template example) */
+.room-popup {
+  background: #1e1e2e;
+  border: 1px solid #3a3a5c;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 160px;
+  font-family: var(--vp-font-family-base);
+  pointer-events: none;
+}
+.room-popup__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c0caf5;
+  margin-bottom: 4px;
+}
+.room-popup__desc {
+  font-size: 12px;
+  color: #6c7086;
+}
+.room-popup__floor {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #414868;
+}
+
+/* Target popup styles */
+.target-popup {
+  font-family: var(--vp-font-family-base);
+}
+.target-popup__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  margin-bottom: 6px;
+}
+.target-popup__desc {
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  margin-bottom: 12px;
+}
+.target-popup__floor {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vp-c-text-3);
+}
+
+/* Demo container — wraps every live example */
+.demo-block {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 24px 0;
+}
+
+.demo-block__preview {
+  padding: 24px;
+  background: var(--vp-c-bg-soft);
+}
+
+.demo-block__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+  padding: 6px 16px;
+  border-top: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+}
+
+/* Default svgic container size in demos */
+.demo-svgic {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 4px;
+  overflow: hidden;
+}
