@@ -1,6 +1,10 @@
 import { defineConfig } from 'vitepress'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
+  vite: {
+    plugins: [react()],
+  },
   title: 'Svgic Examples',
   description: 'Interactive examples for @svgic/core — interactive SVG client',
   base: '/',
@@ -44,6 +48,7 @@ export default defineConfig({
         text: 'Frameworks',
         items: [
           { text: 'Vue 3', link: '/frameworks/vue' },
+          { text: 'React', link: '/frameworks/react' },
         ],
       },
     ],
