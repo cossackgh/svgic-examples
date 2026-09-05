@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="92" fill="none" stroke="#6f4a32" stroke-width="7"/>
+  <path d="M100 52 c26 20 26 56 0 76 c-26-20-26-56 0-76 Z" fill="#6f4a32"/>
+  <text x="100" y="158" text-anchor="middle" font-family="Georgia, serif" font-size="26" letter-spacing="6" fill="#6f4a32">GRANO</text>
+</svg>
