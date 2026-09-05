@@ -40,6 +40,7 @@ export default defineConfig({
             ],
           },
           { text: 'ZoomPlugin', link: '/examples/zoom' },
+          { text: 'ContentPlugin', link: '/examples/content' },
           { text: 'DebugPlugin', link: '/examples/debug' },
           { text: 'Custom Plugin', link: '/examples/custom-plugin' },
         ],
