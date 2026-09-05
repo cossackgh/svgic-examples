@@ -78,7 +78,12 @@
         </div>
 
         <details class="mallnav__legend" :open="!narrow">
-          <summary>Legend</summary>
+          <summary>
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path fill="currentColor" d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z" />
+            </svg>
+            Legend
+          </summary>
           <dl>
             <div v-for="item in LEGEND" :key="item.label">
               <dt v-html="item.svg" />
@@ -463,14 +468,27 @@ onUnmounted(() => {
   border-radius: 10px;
   background: var(--vp-c-bg-soft);
 }
+/* A bare word does not read as something you can open, so the summary gets a
+   chevron that turns — the affordance the default marker was providing. */
 .mallnav__legend summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
-  color: var(--vp-c-text-3);
+  font-weight: 600;
+  color: var(--vp-c-text-2);
   cursor: pointer;
   list-style: none;
+  user-select: none;
 }
 .mallnav__legend summary::-webkit-details-marker { display: none; }
+.mallnav__legend summary svg {
+  color: var(--vp-c-brand-1);
+  transition: transform 0.18s;
+}
+.mallnav__legend[open] summary svg { transform: rotate(180deg); }
 .mallnav__legend[open] summary { margin-bottom: 8px; }
+.mallnav__legend summary:hover { color: var(--vp-c-brand-1); }
 .mallnav__legend dl {
   display: grid;
   grid-template-columns: repeat(2, auto);
