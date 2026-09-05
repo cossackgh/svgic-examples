@@ -1,5 +1,5 @@
 <template>
-  <div class="mallnav">
+  <div class="mallnav" :class="{ searching }">
     <aside class="mallnav__side">
       <div class="mallnav__filters">
         <input
@@ -53,6 +53,9 @@
             <div class="mallnav__card-head">
               <strong>{{ selected.title }}</strong>
               <span class="mallnav__chip">Unit {{ selected.unit }}</span>
+              <button class="mallnav__link" @click="copyLink">
+                {{ copied ? 'Link copied' : 'Copy link' }}
+              </button>
               <button class="mallnav__close" aria-label="Clear" @click="clear">×</button>
             </div>
             <div class="mallnav__card-grid">
@@ -74,12 +77,15 @@
           </p>
         </div>
 
-        <dl class="mallnav__legend">
-          <div v-for="item in LEGEND" :key="item.label">
-            <dt v-html="item.svg" />
-            <dd>{{ item.label }}</dd>
-          </div>
-        </dl>
+        <details class="mallnav__legend" :open="!narrow">
+          <summary>Legend</summary>
+          <dl>
+            <div v-for="item in LEGEND" :key="item.label">
+              <dt v-html="item.svg" />
+              <dd>{{ item.label }}</dd>
+            </div>
+          </dl>
+        </details>
       </div>
     </div>
   </div>
@@ -109,9 +115,15 @@ const query = ref('')
 const category = ref('')
 const current = ref<number>(1)
 const selected = ref<Tenant | null>(null)
+const copied = ref(false)
+const narrow = ref(false)
 
 let client: Svgic | null = null
 let zoom: ZoomPluginInstance | null = null
+let media: MediaQueryList | null = null
+
+/** On a phone the result list only earns its space while you are searching */
+const searching = computed(() => query.value.trim() !== '' || category.value !== '')
 
 const categories = computed(() =>
   [...new Set(TENANTS.map((t) => t.category))].sort((a, b) => a.localeCompare(b)),
@@ -189,11 +201,42 @@ const mount = async () => {
   })
 }
 
+/**
+ * The selection lives in the address bar, so a shop can be linked to. Written
+ * with replaceState: a directory is one screen, and filling the history with
+ * every tap would turn Back into a chore.
+ */
+const syncUrl = (tenant: Tenant | null) => {
+  if (typeof window === 'undefined') return
+
+  const url = new URL(window.location.href)
+
+  if (tenant) url.searchParams.set('shop', tenant.id)
+  else url.searchParams.delete('shop')
+
+  window.history.replaceState(null, '', url)
+}
+
 const select = (tenant: Tenant | null, id: string | null) => {
   selected.value = tenant
+  copied.value = false
   client?.clearHighlight()
 
   if (id) client?.setHighlight('found', [id])
+
+  syncUrl(tenant)
+}
+
+const copyLink = async () => {
+  if (typeof window === 'undefined') return
+
+  try {
+    await navigator.clipboard.writeText(window.location.href)
+    copied.value = true
+    window.setTimeout(() => (copied.value = false), 1600)
+  } catch {
+    // Clipboard is blocked in some embeds; the address bar already holds the link
+  }
 }
 
 const setLevel = async (level: number) => {
@@ -209,7 +252,8 @@ const setLevel = async (level: number) => {
 const goTo = async (tenant: Tenant) => {
   await setLevel(tenant.level)
   select(tenant, tenant.id)
-  zoom?.focusElement(tenant.id, { scale: 2.4 })
+  // The whole-floor view is a thumbnail on a phone, so the flight in goes deeper
+  zoom?.focusElement(tenant.id, { scale: narrow.value ? 3.4 : 2.4 })
 }
 
 const step = (factor: number) => {
@@ -228,22 +272,61 @@ const reset = () => {
   zoom?.reset()
 }
 
-onMounted(() => {
-  void mount()
+/** Opens the shop named in ?shop=, so a shared link lands on the right floor */
+const openFromUrl = async () => {
+  if (typeof window === 'undefined') return
+
+  const id = new URL(window.location.href).searchParams.get('shop')
+  const tenant = id ? TENANTS.find((t) => t.id === id) : null
+
+  if (tenant) await goTo(tenant)
+}
+
+onMounted(async () => {
+  media = window.matchMedia('(max-width: 900px)')
+  narrow.value = media.matches
+  media.addEventListener('change', onMediaChange)
+
+  await mount()
+  await openFromUrl()
 })
 
-onUnmounted(() => client?.destroy())
+function onMediaChange(event: MediaQueryListEvent) {
+  narrow.value = event.matches
+}
+
+onUnmounted(() => {
+  media?.removeEventListener('change', onMediaChange)
+  client?.destroy()
+})
 </script>
 
 <style scoped>
 .mallnav {
   display: grid;
   grid-template-columns: 268px minmax(0, 1fr);
+  grid-template-areas: 'side main';
   gap: 16px;
   align-items: start;
 }
+.mallnav__side { grid-area: side; }
+.mallnav__main { grid-area: main; }
+
+/*
+ * On a phone the map comes first and the search sits above it. The result list
+ * would otherwise push the plan off the screen, so it only appears while a query
+ * or a category is active — which is also when it is the thing you are reading.
+ */
 @media (max-width: 900px) {
-  .mallnav { grid-template-columns: 1fr; }
+  .mallnav {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'side' 'main';
+    gap: 10px;
+  }
+  .mallnav__results { display: none; }
+  .mallnav.searching .mallnav__results { display: block; max-height: 46vh; }
+  .mallnav__filters { grid-template-columns: 1fr auto; }
+  .mallnav__filters select { max-width: 42vw; }
 }
 
 /* ---- sidebar ---- */
@@ -375,16 +458,37 @@ onUnmounted(() => client?.destroy())
 .muted { color: var(--vp-c-text-3); font-size: 12.5px; margin: 0; }
 
 .mallnav__legend {
-  display: grid;
-  grid-template-columns: repeat(2, auto);
-  gap: 4px 14px;
-  margin: 0;
   padding: 12px 14px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 10px;
   background: var(--vp-c-bg-soft);
 }
-.mallnav__legend > div { display: flex; align-items: center; gap: 7px; }
+.mallnav__legend summary {
+  font-size: 12px;
+  color: var(--vp-c-text-3);
+  cursor: pointer;
+  list-style: none;
+}
+.mallnav__legend summary::-webkit-details-marker { display: none; }
+.mallnav__legend[open] summary { margin-bottom: 8px; }
+.mallnav__legend dl {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 4px 14px;
+  margin: 0;
+}
+.mallnav__legend > dl > div { display: flex; align-items: center; gap: 7px; }
 .mallnav__legend dt { display: flex; color: var(--vp-c-brand-1); }
 .mallnav__legend dd { margin: 0; font-size: 12px; color: var(--vp-c-text-2); }
+
+.mallnav__link {
+  border: 1px solid var(--vp-c-divider);
+  background: transparent;
+  color: var(--vp-c-text-3);
+  border-radius: 99px;
+  padding: 2px 9px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.mallnav__link:hover { color: var(--vp-c-brand-1); border-color: var(--vp-c-brand-1); }
 </style>
