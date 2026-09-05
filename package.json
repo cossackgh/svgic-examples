@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@iconify-json/mdi": "^1.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "vitepress": "^1.6.4"
   },
@@ -9,7 +10,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@svgic/core": "^0.2.1",
+    "@svgic/core": "^0.2.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "react": "^18.3.1",

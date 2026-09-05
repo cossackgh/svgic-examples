@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" class="mall-plan" data-level="1">
+  <style>
+    .mall-plan {
+      --plan-bg: #f4f6fa; --plan-shell: #e9edf4; --plan-walk: #ffffff;
+      --plan-unit: #dde4ef; --plan-anchor: #c9d3e5; --plan-line: #94a2bd;
+      --plan-hair: #b9c3d6; --plan-ink: #46506a; --plan-accent: #2f6df6;
+      --plan-on-accent: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      .mall-plan {
+        --plan-bg: #14141f; --plan-shell: #1d1d30; --plan-walk: #2a2a45;
+        --plan-unit: #3a3a5e; --plan-anchor: #474773; --plan-line: #6b6b9c;
+        --plan-hair: #4d4d78; --plan-ink: #d6d9ec; --plan-accent: #7b97ff;
+        --plan-on-accent: #10101a;
+      }
+    }
+    .bg { fill: var(--plan-bg); }
+    .shell { fill: var(--plan-shell); stroke: var(--plan-line); stroke-width: 3; stroke-linejoin: round; }
+    .gallery { fill: var(--plan-walk); }
+    .void { fill: var(--plan-bg); stroke: var(--plan-line); stroke-width: 2.4; }
+    /*
+     * Defaults for anything an application may repaint are stated through :where(),
+     * so they carry zero specificity. A plain "#units path" rule would be (1,0,1)
+     * and would silently beat the class the library puts on a highlighted element,
+     * leaving setHighlight() with no visible effect.
+     */
+    :where(#units) :where(path) { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.6; }
+    :where(#units) :where(path.anchor) { fill: var(--plan-anchor); }
+    :where(#kiosks) :where(rect) { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.4; }
+    .core rect { fill: var(--plan-walk); stroke: var(--plan-line); stroke-width: 1.8; }
+    .core-line { stroke: var(--plan-hair); stroke-width: 1.2; fill: none; }
+    .core-arrow { stroke: var(--plan-accent); stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    /* Iconify bodies carry fill="currentColor", which beats a fill on the group — so set color */
+    .core-icon { color: var(--plan-ink); fill: var(--plan-ink); }
+    .badge rect { fill: var(--plan-accent); }
+    .badge .icon { color: var(--plan-on-accent); fill: var(--plan-on-accent); }
+    .opening { fill: var(--plan-walk); stroke: var(--plan-accent); stroke-width: 2; }
+    .ent-icon { color: var(--plan-accent); fill: var(--plan-accent); }
+    .ent-tag { fill: var(--plan-accent); }
+    .ent-text { font: 600 12px/1 system-ui, sans-serif; fill: var(--plan-on-accent); text-anchor: middle; dominant-baseline: middle; }
+    .yah-halo { fill: var(--plan-accent); opacity: 0.18; }
+    .yah-dot { fill: var(--plan-accent); stroke: var(--plan-on-accent); stroke-width: 2; }
+    .yah-tag { fill: var(--plan-accent); }
+    .yah-text { font: 600 12px/1 system-ui, sans-serif; fill: var(--plan-on-accent); text-anchor: middle; dominant-baseline: middle; }
+    #nav { visibility: hidden; }
+  </style>
+
+  <g id="background">
+    <rect class="bg" width="1600" height="900" />
+    <path class="shell" d="M104 150 L1262 132 L1496 268 L1496 742 L1180 782 L318 782 L104 640 Z" />
+    <path class="gallery" d="M250 398 H1392 V502 H250 Z M250 150 H344 V782 H250 Z M1298 150 H1392 V782 H1298 Z M470 292 H730 V502 H470 Z M930 398 H1190 V608 H930 Z" />
+    <circle class="void" cx="600" cy="450" r="92" />
+    <circle class="void" cx="1060" cy="450" r="84" />
+  </g>
+
+  <g id="units">
+    <path id="a-101" class="anchor" d="M104 150 L250 150 L250 398 L104 398 Z" />
+    <path id="a-102" class="anchor" d="M1392 150 L1262 132 L1496 268 L1496 398 L1392 398 Z" />
+    <path id="a-103" class="anchor" d="M104 640 L104 502 L250 502 L250 782 L318 782 Z" />
+    <path id="u-101" d="M344 196 H489.5 V398 H344 Z" />
+    <path id="u-102" d="M489.5 196 H597.3 V292 H489.5 Z" />
+    <path id="u-103" d="M597.3 196 H726.7 V292 H597.3 Z" />
+    <path id="u-104" d="M726.7 196 H823.7 V398 H726.7 Z" />
+    <path id="u-105" d="M823.7 196 H963.8 V398 H823.7 Z" />
+    <path id="u-106" d="M963.8 196 H1071.6 V398 H963.8 Z" />
+    <path id="u-107" d="M1071.6 196 H1195.6 V398 H1071.6 Z" />
+    <path id="u-108" d="M1195.6 196 H1298 V398 H1195.6 Z" />
+    <path id="u-109" d="M344 502 H495.9 V736 H344 Z" />
+    <path id="u-110" d="M495.9 502 H617.4 V736 H495.9 Z" />
+    <path id="u-111" d="M617.4 502 H757.2 V736 H617.4 Z" />
+    <path id="u-112" d="M757.2 502 H921.3 V736 H757.2 Z" />
+    <path id="u-113" d="M921.3 608 H1030.6 V736 H921.3 Z" />
+    <path id="u-114" d="M1030.6 608 H1176.5 V736 H1030.6 Z" />
+    <path id="u-115" d="M1176.5 502 H1298 V736 H1176.5 Z" />
+  </g>
+
+  <g id="kiosks">
+    <rect id="k-101" x="395" y="437" width="50" height="26" rx="4" />
+    <rect id="k-102" x="775" y="411" width="50" height="26" rx="4" />
+    <rect id="k-103" x="837" y="465" width="50" height="26" rx="4" />
+    <rect id="k-104" x="1215" y="437" width="50" height="26" rx="4" />
+  </g>
+
+  <g id="cores">
+    <g id="core-esc-a" class="core" data-kind="escalator" transform="translate(600 336)">
+      <rect x="-76" y="-23" width="152" height="46" rx="4" />
+      <path class="core-line" d="M-54.3 -18 V18 M-32.6 -18 V18 M-10.9 -18 V18 M10.9 -18 V18 M32.6 -18 V18 M54.3 -18 V18" /><path class="core-arrow" d="M-58 -10 L58 0 L-58 10" />
+    </g>
+    <g id="core-esc-b" class="core" data-kind="escalator" transform="translate(1060 564)">
+      <rect x="-70" y="-23" width="140" height="46" rx="4" />
+      <path class="core-line" d="M-50 -18 V18 M-30 -18 V18 M-10 -18 V18 M10 -18 V18 M30 -18 V18 M50 -18 V18" /><path class="core-arrow" d="M-52 -10 L52 0 L-52 10" />
+    </g>
+    <g id="core-lift-a" class="core" data-kind="lift" transform="translate(297 336)">
+      <rect x="-25" y="-25" width="50" height="50" rx="4" />
+      <g class="core-icon" transform="translate(-15 -15) scale(1.25)"><path fill="currentColor" d="m7 2l4 4H8v4H6V6H3zm10 8l-4-4h3V2h2v4h3zM7 12h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m0 2v6h10v-6z"/></g>
+    </g>
+    <g id="core-lift-b" class="core" data-kind="lift" transform="translate(1345 336)">
+      <rect x="-25" y="-25" width="50" height="50" rx="4" />
+      <g class="core-icon" transform="translate(-15 -15) scale(1.25)"><path fill="currentColor" d="m7 2l4 4H8v4H6V6H3zm10 8l-4-4h3V2h2v4h3zM7 12h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m0 2v6h10v-6z"/></g>
+    </g>
+    <g id="core-stair-a" class="core" data-kind="stair" transform="translate(297 574)">
+      <rect x="-28" y="-24" width="56" height="48" rx="4" />
+      <g class="core-icon" transform="translate(-14 -14) scale(1.1667)"><path fill="currentColor" d="M15 5v4h-4v4H7v4H3v3h7v-4h4v-4h4V8h4V5z"/></g>
+    </g>
+    <g id="core-stair-b" class="core" data-kind="stair" transform="translate(1345 574)">
+      <rect x="-28" y="-24" width="56" height="48" rx="4" />
+      <g class="core-icon" transform="translate(-14 -14) scale(1.1667)"><path fill="currentColor" d="M15 5v4h-4v4H7v4H3v3h7v-4h4v-4h4V8h4V5z"/></g>
+    </g>
+  </g>
+
+  <g id="service">
+    <g id="svc-wc-1" class="badge" data-kind="Restrooms"><rect x="385" y="467" width="30" height="26" rx="7" /><g class="icon" transform="translate(391 471) scale(0.75)"><path fill="currentColor" d="M7.5 2a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M6 7h3a2 2 0 0 1 2 2v5.5H9.5V22h-4v-7.5H4V9a2 2 0 0 1 2-2m10.5-5a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M15 22v-6h-3l2.59-7.59C14.84 7.59 15.6 7 16.5 7s1.66.59 1.91 1.41L21 16h-3v6z"/></g></g>
+    <g id="svc-atm-1" class="badge" data-kind="ATM"><rect x="747" y="465" width="30" height="26" rx="7" /><g class="icon" transform="translate(753 469) scale(0.75)"><path fill="currentColor" d="M8 9v1.5h2.25V15h1.5v-4.5H14V9zM6 9H3a1 1 0 0 0-1 1v5h1.5v-1.5h2V15H7v-5a1 1 0 0 0-1-1m-.5 3h-2v-1.5h2zM21 9h-4.5a1 1 0 0 0-1 1v5H17v-4.5h1V14h1.5v-3.5h1V15H22v-5a1 1 0 0 0-1-1"/></g></g>
+    <g id="svc-info" class="badge" data-kind="Information desk"><rect x="903" y="411" width="30" height="26" rx="7" /><g class="icon" transform="translate(909 415) scale(0.75)"><path fill="currentColor" d="M13.5 4A1.5 1.5 0 0 0 12 5.5A1.5 1.5 0 0 0 13.5 7A1.5 1.5 0 0 0 15 5.5A1.5 1.5 0 0 0 13.5 4m-.36 4.77c-1.19.1-4.44 2.69-4.44 2.69c-.2.15-.14.14.02.42c.16.27.14.29.33.16c.2-.13.53-.34 1.08-.68c2.12-1.36.34 1.78-.57 7.07c-.36 2.62 2 1.27 2.61.87c.6-.39 2.21-1.5 2.37-1.61c.22-.15.06-.27-.11-.52c-.12-.17-.24-.05-.24-.05c-.65.43-1.84 1.33-2 .76c-.19-.57 1.03-4.48 1.7-7.17c.11-.64.41-2.04-.75-1.94"/></g></g>
+    <g id="svc-atm-2" class="badge" data-kind="ATM"><rect x="1237" y="399" width="30" height="26" rx="7" /><g class="icon" transform="translate(1243 403) scale(0.75)"><path fill="currentColor" d="M8 9v1.5h2.25V15h1.5v-4.5H14V9zM6 9H3a1 1 0 0 0-1 1v5h1.5v-1.5h2V15H7v-5a1 1 0 0 0-1-1m-.5 3h-2v-1.5h2zM21 9h-4.5a1 1 0 0 0-1 1v5H17v-4.5h1V14h1.5v-3.5h1V15H22v-5a1 1 0 0 0-1-1"/></g></g>
+    <g id="entrance-1" class="entrance">
+      <rect class="opening" x="263" y="140" width="68" height="14" rx="3" />
+      <g class="ent-icon" transform="translate(286.5 114.5) scale(0.875)"><path fill="currentColor" d="M10 13H8v-2h2zm6-2h-2v2h2zm5 8v2H3v-2h1V5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v14zM11 5H6v14h5zm7 0h-5v14h5z"/></g>
+      <g transform="translate(297 103)">
+        <rect class="ent-tag" x="-42" y="-13" width="84" height="26" rx="13" />
+        <text class="ent-text" y="1">Entrance 1</text>
+      </g>
+    </g>
+    <g id="entrance-2" class="entrance">
+      <rect class="opening" x="263" y="761.1" width="68" height="14" rx="3" />
+      <g class="ent-icon" transform="translate(286.5 779.6) scale(0.875)"><path fill="currentColor" d="M10 13H8v-2h2zm6-2h-2v2h2zm5 8v2H3v-2h1V5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v14zM11 5H6v14h5zm7 0h-5v14h5z"/></g>
+      <g transform="translate(297 812.1)">
+        <rect class="ent-tag" x="-42" y="-13" width="84" height="26" rx="13" />
+        <text class="ent-text" y="1">Entrance 2</text>
+      </g>
+    </g>
+    <g id="entrance-3" class="entrance">
+      <rect class="opening" x="1311" y="173.2" width="68" height="14" rx="3" />
+      <g class="ent-icon" transform="translate(1334.5 147.7) scale(0.875)"><path fill="currentColor" d="M10 13H8v-2h2zm6-2h-2v2h2zm5 8v2H3v-2h1V5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v14zM11 5H6v14h5zm7 0h-5v14h5z"/></g>
+      <g transform="translate(1345 136.2)">
+        <rect class="ent-tag" x="-42" y="-13" width="84" height="26" rx="13" />
+        <text class="ent-text" y="1">Entrance 3</text>
+      </g>
+    </g>
+    <g id="entrance-4" class="entrance">
+      <rect class="opening" x="1311" y="754.1" width="68" height="14" rx="3" />
+      <g class="ent-icon" transform="translate(1334.5 772.6) scale(0.875)"><path fill="currentColor" d="M10 13H8v-2h2zm6-2h-2v2h2zm5 8v2H3v-2h1V5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v14zM11 5H6v14h5zm7 0h-5v14h5z"/></g>
+      <g transform="translate(1345 805.1)">
+        <rect class="ent-tag" x="-42" y="-13" width="84" height="26" rx="13" />
+        <text class="ent-text" y="1">Entrance 4</text>
+      </g>
+    </g>
+    <g id="you-are-here" class="yah" transform="translate(918 424)">
+      <circle class="yah-halo" r="26" />
+      <circle class="yah-dot" r="7" />
+      <g transform="translate(0 -40)">
+        <rect class="yah-tag" x="-52" y="-13" width="104" height="26" rx="13" />
+        <text class="yah-text" y="1">You are here</text>
+      </g>
+    </g>
+  </g>
+
+  <g id="nav">
+    <circle id="n-w" cx="297" cy="450" r="6" data-links="n-lift-a n-stair-a n-w2" />
+    <circle id="n-w-ent-1" cx="297" cy="200" r="6" data-links="n-lift-a" />
+    <circle id="n-w-ent-2" cx="297" cy="720" r="6" data-links="n-stair-a" />
+    <circle id="n-w2" cx="430" cy="450" r="6" data-links="n-w n-atr-a" />
+    <circle id="n-esc-a" cx="600" cy="336" r="6" data-links="n-atr-a" data-vertical="core-esc-a" />
+    <circle id="n-atr-a" cx="600" cy="450" r="6" data-links="n-w2 n-esc-a n-mid" />
+    <circle id="n-mid" cx="830" cy="450" r="6" data-links="n-atr-a n-info" />
+    <circle id="n-info" cx="918" cy="424" r="6" data-links="n-mid n-atr-b" data-origin="true" />
+    <circle id="n-atr-b" cx="1060" cy="450" r="6" data-links="n-info n-esc-b n-e2" />
+    <circle id="n-esc-b" cx="1060" cy="564" r="6" data-links="n-atr-b" data-vertical="core-esc-b" />
+    <circle id="n-e2" cx="1240" cy="450" r="6" data-links="n-atr-b n-e" />
+    <circle id="n-e" cx="1345" cy="450" r="6" data-links="n-e2 n-lift-b n-stair-b" />
+    <circle id="n-e-ent-3" cx="1345" cy="230" r="6" data-links="n-lift-b" />
+    <circle id="n-e-ent-4" cx="1345" cy="710" r="6" data-links="n-stair-b" />
+    <circle id="n-lift-a" cx="297" cy="366" r="6" data-links="n-w-ent-1 n-w" data-vertical="core-lift-a" />
+    <circle id="n-stair-a" cx="297" cy="548" r="6" data-links="n-w n-w-ent-2" data-vertical="core-stair-a" />
+    <circle id="n-lift-b" cx="1345" cy="366" r="6" data-links="n-e-ent-3 n-e" data-vertical="core-lift-b" />
+    <circle id="n-stair-b" cx="1345" cy="548" r="6" data-links="n-e n-e-ent-4" data-vertical="core-stair-b" />
+  </g>
+</svg>
