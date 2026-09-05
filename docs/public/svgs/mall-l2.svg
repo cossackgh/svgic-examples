@@ -18,9 +18,15 @@
     .shell { fill: var(--plan-shell); stroke: var(--plan-line); stroke-width: 3; stroke-linejoin: round; }
     .gallery { fill: var(--plan-walk); }
     .void { fill: var(--plan-bg); stroke: var(--plan-line); stroke-width: 2.4; }
-    #units path { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.6; }
-    #units path.anchor { fill: var(--plan-anchor); }
-    #kiosks rect { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.4; }
+    /*
+     * Defaults for anything an application may repaint are stated through :where(),
+     * so they carry zero specificity. A plain "#units path" rule would be (1,0,1)
+     * and would silently beat the class the library puts on a highlighted element,
+     * leaving setHighlight() with no visible effect.
+     */
+    :where(#units) :where(path) { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.6; }
+    :where(#units) :where(path.anchor) { fill: var(--plan-anchor); }
+    :where(#kiosks) :where(rect) { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.4; }
     .core rect { fill: var(--plan-walk); stroke: var(--plan-line); stroke-width: 1.8; }
     .core-line { stroke: var(--plan-hair); stroke-width: 1.2; fill: none; }
     .core-arrow { stroke: var(--plan-accent); stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -32,6 +38,10 @@
     .ent-icon { color: var(--plan-accent); fill: var(--plan-accent); }
     .ent-tag { fill: var(--plan-accent); }
     .ent-text { font: 600 12px/1 system-ui, sans-serif; fill: var(--plan-on-accent); text-anchor: middle; dominant-baseline: middle; }
+    .yah-halo { fill: var(--plan-accent); opacity: 0.18; }
+    .yah-dot { fill: var(--plan-accent); stroke: var(--plan-on-accent); stroke-width: 2; }
+    .yah-tag { fill: var(--plan-accent); }
+    .yah-text { font: 600 12px/1 system-ui, sans-serif; fill: var(--plan-on-accent); text-anchor: middle; dominant-baseline: middle; }
     #nav { visibility: hidden; }
   </style>
 
@@ -96,9 +106,10 @@
   </g>
 
   <g id="service">
-    <g class="badge"><rect x="381" y="405" width="30" height="26" rx="7" /><g class="icon" transform="translate(387 409) scale(0.75)"><path fill="currentColor" d="M7.5 2a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M6 7h3a2 2 0 0 1 2 2v5.5H9.5V22h-4v-7.5H4V9a2 2 0 0 1 2-2m10.5-5a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M15 22v-6h-3l2.59-7.59C14.84 7.59 15.6 7 16.5 7s1.66.59 1.91 1.41L21 16h-3v6z"/></g></g>
-    <g class="badge"><rect x="767" y="411" width="30" height="26" rx="7" /><g class="icon" transform="translate(773 415) scale(0.75)"><path fill="currentColor" d="M8 9v1.5h2.25V15h1.5v-4.5H14V9zM6 9H3a1 1 0 0 0-1 1v5h1.5v-1.5h2V15H7v-5a1 1 0 0 0-1-1m-.5 3h-2v-1.5h2zM21 9h-4.5a1 1 0 0 0-1 1v5H17v-4.5h1V14h1.5v-3.5h1V15H22v-5a1 1 0 0 0-1-1"/></g></g>
-    <g class="badge"><rect x="1243" y="467" width="30" height="26" rx="7" /><g class="icon" transform="translate(1249 471) scale(0.75)"><path fill="currentColor" d="m18.4 11.2l-4.1.2l2.3-2.6c.2-.3.3-.8.2-1.3c-.1-.3-.2-.6-.5-.8l-5.4-3.2c-.4-.3-1-.2-1.4.1L6.8 6.1c-.5.5-.6 1.2-.1 1.7c.4.5 1.2.5 1.7.1l2-1.8l1.9 1.1l-4.2 4.3c-.1.1-.1.2-.2.2c-.5.2-1 .4-1.4.7L8 13.9c.5-.2 1-.4 1.5-.4c1.9 0 3.5 1.6 3.5 3.5c0 .6-.1 1.1-.4 1.5l1.5 1.5q.9-1.35.9-3c0-1.2-.4-2.4-1.1-3.3l3.3-.3l-.2 4.8c-.1.7.4 1.2 1.1 1.3h.1c.6 0 1.1-.5 1.2-1.1l.2-5.9c0-.3-.1-.7-.3-.9c-.3-.3-.6-.4-.9-.4M18 5.5a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m-5.5 16.1q-1.35.9-3 .9C6.5 22.5 4 20 4 17q0-1.65.9-3l1.5 1.5c-.2.5-.4 1-.4 1.5c0 1.9 1.6 3.5 3.5 3.5c.6 0 1.1-.1 1.5-.4z"/></g></g>
+    <g id="svc-wc-2" class="badge" data-kind="Restrooms"><rect x="381" y="405" width="30" height="26" rx="7" /><g class="icon" transform="translate(387 409) scale(0.75)"><path fill="currentColor" d="M7.5 2a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M6 7h3a2 2 0 0 1 2 2v5.5H9.5V22h-4v-7.5H4V9a2 2 0 0 1 2-2m10.5-5a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M15 22v-6h-3l2.59-7.59C14.84 7.59 15.6 7 16.5 7s1.66.59 1.91 1.41L21 16h-3v6z"/></g></g>
+    <g id="svc-atm-3" class="badge" data-kind="ATM"><rect x="767" y="411" width="30" height="26" rx="7" /><g class="icon" transform="translate(773 415) scale(0.75)"><path fill="currentColor" d="M8 9v1.5h2.25V15h1.5v-4.5H14V9zM6 9H3a1 1 0 0 0-1 1v5h1.5v-1.5h2V15H7v-5a1 1 0 0 0-1-1m-.5 3h-2v-1.5h2zM21 9h-4.5a1 1 0 0 0-1 1v5H17v-4.5h1V14h1.5v-3.5h1V15H22v-5a1 1 0 0 0-1-1"/></g></g>
+    <g id="svc-acc-2" class="badge" data-kind="Accessible entrance"><rect x="1243" y="467" width="30" height="26" rx="7" /><g class="icon" transform="translate(1249 471) scale(0.75)"><path fill="currentColor" d="m18.4 11.2l-4.1.2l2.3-2.6c.2-.3.3-.8.2-1.3c-.1-.3-.2-.6-.5-.8l-5.4-3.2c-.4-.3-1-.2-1.4.1L6.8 6.1c-.5.5-.6 1.2-.1 1.7c.4.5 1.2.5 1.7.1l2-1.8l1.9 1.1l-4.2 4.3c-.1.1-.1.2-.2.2c-.5.2-1 .4-1.4.7L8 13.9c.5-.2 1-.4 1.5-.4c1.9 0 3.5 1.6 3.5 3.5c0 .6-.1 1.1-.4 1.5l1.5 1.5q.9-1.35.9-3c0-1.2-.4-2.4-1.1-3.3l3.3-.3l-.2 4.8c-.1.7.4 1.2 1.1 1.3h.1c.6 0 1.1-.5 1.2-1.1l.2-5.9c0-.3-.1-.7-.3-.9c-.3-.3-.6-.4-.9-.4M18 5.5a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m-5.5 16.1q-1.35.9-3 .9C6.5 22.5 4 20 4 17q0-1.65.9-3l1.5 1.5c-.2.5-.4 1-.4 1.5c0 1.9 1.6 3.5 3.5 3.5c.6 0 1.1-.1 1.5-.4z"/></g></g>
+
 
   </g>
 
@@ -107,8 +118,8 @@
     <circle id="n-w2" cx="430" cy="450" r="6" data-links="n-w n-atr-a" />
     <circle id="n-esc-a" cx="600" cy="336" r="6" data-links="n-atr-a" data-vertical="core-esc-a" />
     <circle id="n-atr-a" cx="600" cy="450" r="6" data-links="n-w2 n-esc-a n-mid" />
-    <circle id="n-mid" cx="830" cy="450" r="6" data-links="n-atr-a n-atr-b" />
-    <circle id="n-atr-b" cx="1060" cy="450" r="6" data-links="n-mid n-esc-b n-e2" />
+    <circle id="n-mid" cx="830" cy="450" r="6" data-links="n-atr-a n-info" />
+    <circle id="n-atr-b" cx="1060" cy="450" r="6" data-links="n-info n-esc-b n-e2" />
     <circle id="n-esc-b" cx="1060" cy="564" r="6" data-links="n-atr-b" data-vertical="core-esc-b" />
     <circle id="n-e2" cx="1240" cy="450" r="6" data-links="n-atr-b n-e" />
     <circle id="n-e" cx="1345" cy="450" r="6" data-links="n-e2 n-lift-b n-stair-b" />

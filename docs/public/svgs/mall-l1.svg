@@ -18,9 +18,15 @@
     .shell { fill: var(--plan-shell); stroke: var(--plan-line); stroke-width: 3; stroke-linejoin: round; }
     .gallery { fill: var(--plan-walk); }
     .void { fill: var(--plan-bg); stroke: var(--plan-line); stroke-width: 2.4; }
-    #units path { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.6; }
-    #units path.anchor { fill: var(--plan-anchor); }
-    #kiosks rect { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.4; }
+    /*
+     * Defaults for anything an application may repaint are stated through :where(),
+     * so they carry zero specificity. A plain "#units path" rule would be (1,0,1)
+     * and would silently beat the class the library puts on a highlighted element,
+     * leaving setHighlight() with no visible effect.
+     */
+    :where(#units) :where(path) { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.6; }
+    :where(#units) :where(path.anchor) { fill: var(--plan-anchor); }
+    :where(#kiosks) :where(rect) { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.4; }
     .core rect { fill: var(--plan-walk); stroke: var(--plan-line); stroke-width: 1.8; }
     .core-line { stroke: var(--plan-hair); stroke-width: 1.2; fill: none; }
     .core-arrow { stroke: var(--plan-accent); stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -32,6 +38,10 @@
     .ent-icon { color: var(--plan-accent); fill: var(--plan-accent); }
     .ent-tag { fill: var(--plan-accent); }
     .ent-text { font: 600 12px/1 system-ui, sans-serif; fill: var(--plan-on-accent); text-anchor: middle; dominant-baseline: middle; }
+    .yah-halo { fill: var(--plan-accent); opacity: 0.18; }
+    .yah-dot { fill: var(--plan-accent); stroke: var(--plan-on-accent); stroke-width: 2; }
+    .yah-tag { fill: var(--plan-accent); }
+    .yah-text { font: 600 12px/1 system-ui, sans-serif; fill: var(--plan-on-accent); text-anchor: middle; dominant-baseline: middle; }
     #nav { visibility: hidden; }
   </style>
 
@@ -99,10 +109,10 @@
   </g>
 
   <g id="service">
-    <g class="badge"><rect x="385" y="467" width="30" height="26" rx="7" /><g class="icon" transform="translate(391 471) scale(0.75)"><path fill="currentColor" d="M7.5 2a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M6 7h3a2 2 0 0 1 2 2v5.5H9.5V22h-4v-7.5H4V9a2 2 0 0 1 2-2m10.5-5a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M15 22v-6h-3l2.59-7.59C14.84 7.59 15.6 7 16.5 7s1.66.59 1.91 1.41L21 16h-3v6z"/></g></g>
-    <g class="badge"><rect x="747" y="465" width="30" height="26" rx="7" /><g class="icon" transform="translate(753 469) scale(0.75)"><path fill="currentColor" d="M8 9v1.5h2.25V15h1.5v-4.5H14V9zM6 9H3a1 1 0 0 0-1 1v5h1.5v-1.5h2V15H7v-5a1 1 0 0 0-1-1m-.5 3h-2v-1.5h2zM21 9h-4.5a1 1 0 0 0-1 1v5H17v-4.5h1V14h1.5v-3.5h1V15H22v-5a1 1 0 0 0-1-1"/></g></g>
-    <g class="badge"><rect x="903" y="411" width="30" height="26" rx="7" /><g class="icon" transform="translate(909 415) scale(0.75)"><path fill="currentColor" d="M13.5 4A1.5 1.5 0 0 0 12 5.5A1.5 1.5 0 0 0 13.5 7A1.5 1.5 0 0 0 15 5.5A1.5 1.5 0 0 0 13.5 4m-.36 4.77c-1.19.1-4.44 2.69-4.44 2.69c-.2.15-.14.14.02.42c.16.27.14.29.33.16c.2-.13.53-.34 1.08-.68c2.12-1.36.34 1.78-.57 7.07c-.36 2.62 2 1.27 2.61.87c.6-.39 2.21-1.5 2.37-1.61c.22-.15.06-.27-.11-.52c-.12-.17-.24-.05-.24-.05c-.65.43-1.84 1.33-2 .76c-.19-.57 1.03-4.48 1.7-7.17c.11-.64.41-2.04-.75-1.94"/></g></g>
-    <g class="badge"><rect x="1237" y="399" width="30" height="26" rx="7" /><g class="icon" transform="translate(1243 403) scale(0.75)"><path fill="currentColor" d="M8 9v1.5h2.25V15h1.5v-4.5H14V9zM6 9H3a1 1 0 0 0-1 1v5h1.5v-1.5h2V15H7v-5a1 1 0 0 0-1-1m-.5 3h-2v-1.5h2zM21 9h-4.5a1 1 0 0 0-1 1v5H17v-4.5h1V14h1.5v-3.5h1V15H22v-5a1 1 0 0 0-1-1"/></g></g>
+    <g id="svc-wc-1" class="badge" data-kind="Restrooms"><rect x="385" y="467" width="30" height="26" rx="7" /><g class="icon" transform="translate(391 471) scale(0.75)"><path fill="currentColor" d="M7.5 2a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M6 7h3a2 2 0 0 1 2 2v5.5H9.5V22h-4v-7.5H4V9a2 2 0 0 1 2-2m10.5-5a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2M15 22v-6h-3l2.59-7.59C14.84 7.59 15.6 7 16.5 7s1.66.59 1.91 1.41L21 16h-3v6z"/></g></g>
+    <g id="svc-atm-1" class="badge" data-kind="ATM"><rect x="747" y="465" width="30" height="26" rx="7" /><g class="icon" transform="translate(753 469) scale(0.75)"><path fill="currentColor" d="M8 9v1.5h2.25V15h1.5v-4.5H14V9zM6 9H3a1 1 0 0 0-1 1v5h1.5v-1.5h2V15H7v-5a1 1 0 0 0-1-1m-.5 3h-2v-1.5h2zM21 9h-4.5a1 1 0 0 0-1 1v5H17v-4.5h1V14h1.5v-3.5h1V15H22v-5a1 1 0 0 0-1-1"/></g></g>
+    <g id="svc-info" class="badge" data-kind="Information desk"><rect x="903" y="411" width="30" height="26" rx="7" /><g class="icon" transform="translate(909 415) scale(0.75)"><path fill="currentColor" d="M13.5 4A1.5 1.5 0 0 0 12 5.5A1.5 1.5 0 0 0 13.5 7A1.5 1.5 0 0 0 15 5.5A1.5 1.5 0 0 0 13.5 4m-.36 4.77c-1.19.1-4.44 2.69-4.44 2.69c-.2.15-.14.14.02.42c.16.27.14.29.33.16c.2-.13.53-.34 1.08-.68c2.12-1.36.34 1.78-.57 7.07c-.36 2.62 2 1.27 2.61.87c.6-.39 2.21-1.5 2.37-1.61c.22-.15.06-.27-.11-.52c-.12-.17-.24-.05-.24-.05c-.65.43-1.84 1.33-2 .76c-.19-.57 1.03-4.48 1.7-7.17c.11-.64.41-2.04-.75-1.94"/></g></g>
+    <g id="svc-atm-2" class="badge" data-kind="ATM"><rect x="1237" y="399" width="30" height="26" rx="7" /><g class="icon" transform="translate(1243 403) scale(0.75)"><path fill="currentColor" d="M8 9v1.5h2.25V15h1.5v-4.5H14V9zM6 9H3a1 1 0 0 0-1 1v5h1.5v-1.5h2V15H7v-5a1 1 0 0 0-1-1m-.5 3h-2v-1.5h2zM21 9h-4.5a1 1 0 0 0-1 1v5H17v-4.5h1V14h1.5v-3.5h1V15H22v-5a1 1 0 0 0-1-1"/></g></g>
     <g id="entrance-1" class="entrance">
       <rect class="opening" x="263" y="140" width="68" height="14" rx="3" />
       <g class="ent-icon" transform="translate(286.5 114.5) scale(0.875)"><path fill="currentColor" d="M10 13H8v-2h2zm6-2h-2v2h2zm5 8v2H3v-2h1V5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v14zM11 5H6v14h5zm7 0h-5v14h5z"/></g>
@@ -135,6 +145,14 @@
         <text class="ent-text" y="1">Entrance 4</text>
       </g>
     </g>
+    <g id="you-are-here" class="yah" transform="translate(918 424)">
+      <circle class="yah-halo" r="26" />
+      <circle class="yah-dot" r="7" />
+      <g transform="translate(0 -40)">
+        <rect class="yah-tag" x="-52" y="-13" width="104" height="26" rx="13" />
+        <text class="yah-text" y="1">You are here</text>
+      </g>
+    </g>
   </g>
 
   <g id="nav">
@@ -144,8 +162,9 @@
     <circle id="n-w2" cx="430" cy="450" r="6" data-links="n-w n-atr-a" />
     <circle id="n-esc-a" cx="600" cy="336" r="6" data-links="n-atr-a" data-vertical="core-esc-a" />
     <circle id="n-atr-a" cx="600" cy="450" r="6" data-links="n-w2 n-esc-a n-mid" />
-    <circle id="n-mid" cx="830" cy="450" r="6" data-links="n-atr-a n-atr-b" />
-    <circle id="n-atr-b" cx="1060" cy="450" r="6" data-links="n-mid n-esc-b n-e2" />
+    <circle id="n-mid" cx="830" cy="450" r="6" data-links="n-atr-a n-info" />
+    <circle id="n-info" cx="918" cy="424" r="6" data-links="n-mid n-atr-b" data-origin="true" />
+    <circle id="n-atr-b" cx="1060" cy="450" r="6" data-links="n-info n-esc-b n-e2" />
     <circle id="n-esc-b" cx="1060" cy="564" r="6" data-links="n-atr-b" data-vertical="core-esc-b" />
     <circle id="n-e2" cx="1240" cy="450" r="6" data-links="n-atr-b n-e" />
     <circle id="n-e" cx="1345" cy="450" r="6" data-links="n-e2 n-lift-b n-stair-b" />

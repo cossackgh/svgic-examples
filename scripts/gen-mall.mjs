@@ -97,6 +97,13 @@ const setbackAt = (x, side) => {
   return side === 'north' ? SPINE.y0 : SPINE.y1
 }
 
+/**
+ * The directory is mounted at the information desk on level 1, so that point is
+ * a fixed origin for a route. It is part of the installation, not of the app
+ * state, which is why it lives in the plan.
+ */
+const YOU_ARE_HERE = { x: 918, y: 424, level: 1 }
+
 /** Entrances sit where a cross gallery meets the perimeter wall */
 const ENTRANCES = [
   { num: 1, x: 297, side: 'north' },
@@ -141,10 +148,10 @@ const FLOORS = [
       { id: 'k-103', x: 862, y: 478 }, { id: 'k-104', x: 1240, y: 450 },
     ],
     badges: [
-      { x: 400, y: 480, icon: 'human-male-female' },
-      { x: 762, y: 478, icon: 'atm' },
-      { x: 918, y: 424, icon: 'information-variant' },
-      { x: 1252, y: 412, icon: 'atm' },
+      { id: 'svc-wc-1', kind: 'Restrooms', x: 400, y: 480, icon: 'human-male-female' },
+      { id: 'svc-atm-1', kind: 'ATM', x: 762, y: 478, icon: 'atm' },
+      { id: 'svc-info', kind: 'Information desk', x: 918, y: 424, icon: 'information-variant' },
+      { id: 'svc-atm-2', kind: 'ATM', x: 1252, y: 412, icon: 'atm' },
     ],
   },
   {
@@ -160,9 +167,9 @@ const FLOORS = [
       { id: 'k-203', x: 1230, y: 450 },
     ],
     badges: [
-      { x: 396, y: 418, icon: 'human-male-female' },
-      { x: 782, y: 424, icon: 'atm' },
-      { x: 1258, y: 480, icon: 'wheelchair-accessibility' },
+      { id: 'svc-wc-2', kind: 'Restrooms', x: 396, y: 418, icon: 'human-male-female' },
+      { id: 'svc-atm-3', kind: 'ATM', x: 782, y: 424, icon: 'atm' },
+      { id: 'svc-acc-2', kind: 'Accessible entrance', x: 1258, y: 480, icon: 'wheelchair-accessibility' },
     ],
   },
   {
@@ -175,9 +182,9 @@ const FLOORS = [
     south: { x0: 1180, x1: 1298, back: 736, widths: [1] },
     kiosks: [{ id: 'k-301', x: 860, y: 450 }],
     badges: [
-      { x: 420, y: 470, icon: 'human-male-female' },
-      { x: 1252, y: 424, icon: 'information-variant' },
-      { x: 700, y: 660, icon: 'food-fork-drink' },
+      { id: 'svc-wc-3', kind: 'Restrooms', x: 420, y: 470, icon: 'human-male-female' },
+      { id: 'svc-info-3', kind: 'Information desk', x: 1252, y: 424, icon: 'information-variant' },
+      { id: 'svc-food-3', kind: 'Food court', x: 700, y: 660, icon: 'food-fork-drink' },
     ],
   },
 ]
@@ -226,6 +233,15 @@ const entranceMarkup = ENTRANCES.map((e) => {
     </g>`
 }).join('\n')
 
+const youAreHereMarkup = `    <g id="you-are-here" class="yah" transform="translate(${YOU_ARE_HERE.x} ${YOU_ARE_HERE.y})">
+      <circle class="yah-halo" r="26" />
+      <circle class="yah-dot" r="7" />
+      <g transform="translate(0 -40)">
+        <rect class="yah-tag" x="-52" y="-13" width="104" height="26" rx="13" />
+        <text class="yah-text" y="1">You are here</text>
+      </g>
+    </g>`
+
 const galleryPath = [
   `M${SPINE.x0} ${SPINE.y0} H${SPINE.x1} V${SPINE.y1} H${SPINE.x0} Z`,
   ...CROSS.map((c) => `M${c.x0} ${c.y0} H${c.x1} V${c.y1} H${c.x0} Z`),
@@ -243,6 +259,7 @@ const NAV = {
     { id: 'n-esc-a', x: 600, y: 336, core: 'esc-a' },
     { id: 'n-atr-a', x: 600, y: 450 },
     { id: 'n-mid', x: 830, y: 450 },
+    { id: 'n-info', x: 918, y: 424, origin: true },
     { id: 'n-atr-b', x: 1060, y: 450 },
     { id: 'n-esc-b', x: 1060, y: 564, core: 'esc-b' },
     { id: 'n-e2', x: 1240, y: 450 },
@@ -257,7 +274,7 @@ const NAV = {
   links: [
     ['n-w-ent-1', 'n-lift-a'], ['n-lift-a', 'n-w'], ['n-w', 'n-stair-a'],
     ['n-stair-a', 'n-w-ent-2'], ['n-w', 'n-w2'], ['n-w2', 'n-atr-a'],
-    ['n-atr-a', 'n-esc-a'], ['n-atr-a', 'n-mid'], ['n-mid', 'n-atr-b'],
+    ['n-atr-a', 'n-esc-a'], ['n-atr-a', 'n-mid'], ['n-mid', 'n-info'], ['n-info', 'n-atr-b'],
     ['n-atr-b', 'n-esc-b'], ['n-atr-b', 'n-e2'], ['n-e2', 'n-e'],
     ['n-e-ent-3', 'n-lift-b'], ['n-lift-b', 'n-e'], ['n-e', 'n-stair-b'],
     ['n-stair-b', 'n-e-ent-4'],
@@ -273,12 +290,12 @@ const navMarkup = (level) => {
   }
 
   return NAV.nodes
-    .filter((n) => level === 1 || !n.id.includes('ent'))
+    .filter((n) => level === 1 || (!n.id.includes('ent') && n.id !== 'n-info'))
     .map(
       (n) =>
         `    <circle id="${n.id}" cx="${n.x}" cy="${n.y}" r="6" data-links="${adj[n.id].join(' ')}"${
           n.core ? ` data-vertical="core-${n.core}"` : ''
-        } />`,
+        }${n.origin ? ' data-origin="true"' : ''} />`,
     )
     .join('\n')
 }
@@ -314,9 +331,15 @@ const build = (floor) => {
     .shell { fill: var(--plan-shell); stroke: var(--plan-line); stroke-width: 3; stroke-linejoin: round; }
     .gallery { fill: var(--plan-walk); }
     .void { fill: var(--plan-bg); stroke: var(--plan-line); stroke-width: 2.4; }
-    #units path { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.6; }
-    #units path.anchor { fill: var(--plan-anchor); }
-    #kiosks rect { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.4; }
+    /*
+     * Defaults for anything an application may repaint are stated through :where(),
+     * so they carry zero specificity. A plain "#units path" rule would be (1,0,1)
+     * and would silently beat the class the library puts on a highlighted element,
+     * leaving setHighlight() with no visible effect.
+     */
+    :where(#units) :where(path) { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.6; }
+    :where(#units) :where(path.anchor) { fill: var(--plan-anchor); }
+    :where(#kiosks) :where(rect) { fill: var(--plan-unit); stroke: var(--plan-line); stroke-width: 1.4; }
     .core rect { fill: var(--plan-walk); stroke: var(--plan-line); stroke-width: 1.8; }
     .core-line { stroke: var(--plan-hair); stroke-width: 1.2; fill: none; }
     .core-arrow { stroke: var(--plan-accent); stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -328,6 +351,10 @@ const build = (floor) => {
     .ent-icon { color: var(--plan-accent); fill: var(--plan-accent); }
     .ent-tag { fill: var(--plan-accent); }
     .ent-text { font: 600 12px/1 system-ui, sans-serif; fill: var(--plan-on-accent); text-anchor: middle; dominant-baseline: middle; }
+    .yah-halo { fill: var(--plan-accent); opacity: 0.18; }
+    .yah-dot { fill: var(--plan-accent); stroke: var(--plan-on-accent); stroke-width: 2; }
+    .yah-tag { fill: var(--plan-accent); }
+    .yah-text { font: 600 12px/1 system-ui, sans-serif; fill: var(--plan-on-accent); text-anchor: middle; dominant-baseline: middle; }
     #nav { visibility: hidden; }
   </style>
 
@@ -355,10 +382,11 @@ ${coreMarkup}
 ${floor.badges
   .map(
     (b) =>
-      `    <g class="badge"><rect x="${b.x - 15}" y="${b.y - 13}" width="30" height="26" rx="7" />${icon(b.icon, b.x, b.y, 18)}</g>`,
+      `    <g id="${b.id}" class="badge" data-kind="${b.kind}"><rect x="${b.x - 15}" y="${b.y - 13}" width="30" height="26" rx="7" />${icon(b.icon, b.x, b.y, 18)}</g>`,
   )
   .join('\n')}
 ${floor.level === 1 ? entranceMarkup : ''}
+${floor.level === YOU_ARE_HERE.level ? youAreHereMarkup : ''}
   </g>
 
   <g id="nav">
