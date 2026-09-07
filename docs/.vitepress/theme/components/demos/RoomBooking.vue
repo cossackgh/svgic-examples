@@ -87,8 +87,10 @@
           <template v-if="selected">
             <div class="rb__card-head">
               <strong>{{ selected.title }}</strong>
-              <span class="rb__chip">Room {{ selected.unit }}</span>
-              <span class="rb__chip">{{ selected.seats }} seats</span>
+              <span class="rb__chip">
+                {{ selected.kind === 'booth' ? 'Phone booth' : `Room ${selected.unit}` }}
+              </span>
+              <span class="rb__chip">{{ selected.seats }} {{ selected.seats === 1 ? 'seat' : 'seats' }}</span>
               <button class="rb__link" @click="copyLink">
                 {{ copied ? 'Link copied' : 'Copy link' }}
               </button>
@@ -158,6 +160,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { Svgic } from '@svgic/core'
 import { ZoomPlugin } from '@svgic/core/plugins/zoom'
+import type { SvgicItem } from '@svgic/core'
 import type { ZoomPluginInstance } from '@svgic/core/plugins/zoom'
 import { ContentPlugin } from '@svgic/core/plugins/content'
 import DayStrip from './DayStrip.vue'
@@ -168,6 +171,7 @@ import {
   DAY_END,
   SLOT,
   EQUIPMENT_LABEL,
+  changeAt,
   describe,
   describeLong,
   fits,
@@ -342,6 +346,98 @@ const jumpToFree = () => {
   if (nextFree.value !== null) from.value = nextFree.value
 }
 
+// ------------------------------------------------------------------ popup
+
+/** What the status pill says about a room at the requested time */
+const pill = (room: Room): { tone: string; text: string } => {
+  const day = dayOf.value[room.id]!
+  const own = bookings.value.find((b) => b.room === room.id && overlapsSlot(b.slot))
+
+  if (own) return { tone: 'mine', text: `Yours, ${fmtRange(own.slot)}` }
+
+  const status = statusFor(room)
+
+  if (status === 'busy') return { tone: 'busy', text: `Busy till ${fmt(changeAt(day, from.value) ?? DAY_END)}` }
+  if (status === 'soon') return { tone: 'soon', text: `Only till ${fmt(changeAt(day, from.value) ?? DAY_END)}` }
+
+  return { tone: 'free', text: `Free ${fmtRange(slot.value)}` }
+}
+
+const line = (parent: HTMLElement, className: string, text: string): HTMLElement => {
+  const node = document.createElement('div')
+
+  node.className = className
+  node.textContent = text
+  parent.appendChild(node)
+
+  return node
+}
+
+/**
+ * The hover card.
+ *
+ * Answers what the shape cannot: the full kit, and when the room frees up. It
+ * is built at hover time, so it reads the requested slot as it stands rather
+ * than whatever it was when the floor was drawn.
+ */
+const renderPopup = (item: SvgicItem): HTMLElement => {
+  const room = item as Room
+  const box = document.createElement('div')
+
+  box.className = 'rb-pop'
+
+  const head = document.createElement('div')
+
+  head.className = 'rb-pop__head'
+  line(head, 'rb-pop__title', room.title)
+
+  const status = pill(room)
+  const tag = line(head, `rb-pop__pill ${status.tone}`, status.text)
+
+  tag.classList.add('rb-pop__pill')
+  box.appendChild(head)
+
+  // A booth has no door number and no window — calling it "Room 6.01" would
+  // also collide with the meeting room that carries that number
+  const meta =
+    room.kind === 'booth'
+      ? `${room.seats} ${room.seats === 1 ? 'seat' : 'seats'} · Phone booth · ${room.wing.toLowerCase()} corridor`
+      : `${room.seats} seats · Room ${room.unit} · ${room.wing} facade`
+
+  line(box, 'rb-pop__meta', meta)
+
+  if (room.equipment.length) {
+    const kit = document.createElement('div')
+
+    kit.className = 'rb-pop__kit'
+
+    for (const key of room.equipment) {
+      const chip = document.createElement('span')
+
+      chip.innerHTML = iconOf(key)
+      chip.append(EQUIPMENT_LABEL[key])
+      kit.appendChild(chip)
+    }
+
+    box.appendChild(kit)
+  }
+
+  if (status.tone === 'busy' || status.tone === 'soon') {
+    const day = dayOf.value[room.id]!
+
+    for (let at = from.value + SLOT; at <= DAY_END - duration.value; at += SLOT) {
+      if (fits(day, [at, at + duration.value])) {
+        line(box, 'rb-pop__next', `Next free at ${fmt(at)}`)
+        break
+      }
+    }
+  }
+
+  if (!matches(room)) line(box, 'rb-pop__off', 'Outside the current filter')
+
+  return box
+}
+
 // --------------------------------------------------------------- the plan
 
 const label = (item: Room | null) => item?.title
@@ -441,6 +537,13 @@ const mount = async () => {
         ],
       }),
     ],
+    popup: {
+      placement: 'element',
+      anchor: 'top-center',
+      offset: { x: 0, y: -10 },
+      hideDelay: 60,
+      render: renderPopup,
+    },
     style: {
       default: { cursor: 'pointer', transition: 'fill 0.18s, stroke 0.18s' },
       // Every room is always in some state, so the plain hover rule never applies
@@ -891,4 +994,53 @@ onUnmounted(() => {
   cursor: pointer;
 }
 .rb__link:hover { color: var(--vp-c-brand-1); border-color: var(--vp-c-brand-1); }
+</style>
+
+<!--
+  The popup is mounted on document.body by the library, so its styles cannot be
+  scoped to this component — a scoped rule would never reach it.
+-->
+<style>
+.rb-pop {
+  --pop-free: #2f9e5a;
+  --pop-soon: #cf8a28;
+  --pop-busy: #cf5555;
+  --pop-mine: var(--vp-c-brand-1);
+  position: absolute;
+  z-index: 60;
+  max-width: 260px;
+  padding: 9px 11px 10px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 9px;
+  background: var(--vp-c-bg-elv, var(--vp-c-bg));
+  box-shadow: 0 6px 22px rgb(0 0 0 / 22%);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--vp-c-text-1);
+  /* Nothing in here is clickable, and a card under the cursor only flickers */
+  pointer-events: none;
+}
+.dark .rb-pop { --pop-free: #4cbd7d; --pop-soon: #d9a24a; --pop-busy: #e07a7a; }
+
+.rb-pop__head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.rb-pop__title { font-weight: 600; font-size: 13.5px; }
+.rb-pop__pill {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: 99px;
+  border: 1px solid currentColor;
+  font-size: 10.5px;
+  font-family: var(--vp-font-family-mono);
+  white-space: nowrap;
+}
+.rb-pop__pill.free { color: var(--pop-free); }
+.rb-pop__pill.soon { color: var(--pop-soon); }
+.rb-pop__pill.busy { color: var(--pop-busy); }
+.rb-pop__pill.mine { color: var(--pop-mine); }
+
+.rb-pop__meta { color: var(--vp-c-text-3); font-size: 11.5px; }
+.rb-pop__kit { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; color: var(--vp-c-text-2); font-size: 11.5px; }
+.rb-pop__kit span { display: inline-flex; align-items: center; gap: 4px; }
+.rb-pop__next { margin-top: 6px; color: var(--pop-free); font-size: 11.5px; }
+.rb-pop__off { margin-top: 5px; color: var(--vp-c-text-3); font-size: 11px; font-style: italic; }
 </style>

@@ -99,6 +99,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Svgic } from '@svgic/core'
+import type { SvgicItem } from '@svgic/core'
 import { ZoomPlugin } from '@svgic/core/plugins/zoom'
 import type { ZoomPluginInstance } from '@svgic/core/plugins/zoom'
 import { ContentPlugin } from '@svgic/core/plugins/content'
@@ -167,6 +168,51 @@ const contentChain = () => [
   { type: 'text' as const, text: ({ item }) => unitNo(item as Tenant), fill: 'var(--plan-ink)', opacity: 0.5 },
 ]
 
+/**
+ * The hover card.
+ *
+ * A directory entry, not a summary of the shape: the logo the plan may have had
+ * no room for, the category, the level and the opening hours. Placed at the
+ * cursor, the way a tooltip on a map is.
+ */
+const renderPopup = (item: SvgicItem): HTMLElement => {
+  const tenant = item as Tenant
+  const box = document.createElement('div')
+
+  box.className = 'mall-pop'
+
+  if (tenant.logo) {
+    const logo = document.createElement('img')
+
+    logo.className = 'mall-pop__logo'
+    logo.src = tenant.logo
+    logo.alt = ''
+    box.appendChild(logo)
+  }
+
+  const title = document.createElement('div')
+
+  title.className = 'mall-pop__title'
+  title.textContent = tenant.title
+  box.appendChild(title)
+
+  const meta = document.createElement('div')
+
+  meta.className = 'mall-pop__meta'
+  meta.textContent = `${tenant.category} · Level ${tenant.level} · Unit ${tenant.unit}`
+  box.appendChild(meta)
+
+  if (tenant.hours) {
+    const hours = document.createElement('div')
+
+    hours.className = 'mall-pop__hours'
+    hours.textContent = tenant.hours
+    box.appendChild(hours)
+  }
+
+  return box
+}
+
 const mount = async () => {
   zoom = ZoomPlugin({ wheelMode: 'ctrl', minScale: 0.7, maxScale: 6, animate: true })
 
@@ -188,6 +234,11 @@ const mount = async () => {
         content: [{ type: 'text', text: ({ item }) => label(item as Tenant), fill: 'var(--plan-ink)' }],
       }),
     ],
+    popup: {
+      placement: 'cursor',
+      offset: { x: 18, y: 18 },
+      render: renderPopup,
+    },
     style: {
       default: { cursor: 'pointer', transition: 'fill 0.15s, stroke 0.15s' },
       hover: { fill: 'var(--plan-hover)' },
@@ -509,4 +560,34 @@ onUnmounted(() => {
   cursor: pointer;
 }
 .mallnav__link:hover { color: var(--vp-c-brand-1); border-color: var(--vp-c-brand-1); }
+</style>
+
+<!--
+  The popup is mounted on document.body by the library, so its styles cannot be
+  scoped to this component — a scoped rule would never reach it.
+-->
+<style>
+.mall-pop {
+  position: absolute;
+  z-index: 60;
+  width: max-content;
+  max-width: 240px;
+  padding: 9px 11px 10px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 9px;
+  background: var(--vp-c-bg-elv, var(--vp-c-bg));
+  box-shadow: 0 6px 22px rgb(0 0 0 / 22%);
+  color: var(--vp-c-text-1);
+  /* It follows the cursor, so it must never be under it */
+  pointer-events: none;
+}
+.mall-pop__logo { display: block; max-width: 116px; max-height: 34px; margin-bottom: 7px; }
+.mall-pop__title { font-weight: 600; font-size: 13.5px; }
+.mall-pop__meta { margin-top: 2px; font-size: 11.5px; color: var(--vp-c-text-3); }
+.mall-pop__hours {
+  margin-top: 5px;
+  font-size: 11.5px;
+  font-family: var(--vp-font-family-mono);
+  color: var(--vp-c-text-2);
+}
 </style>
