@@ -57,15 +57,7 @@
           <span>{{ freeCount }} of {{ ROOMS.length }} rooms free</span>
         </div>
 
-        <input
-          v-model.number="from"
-          class="rb__slider"
-          type="range"
-          :min="DAY_START"
-          :max="DAY_END - duration"
-          :step="SLOT"
-          aria-label="Start time"
-        />
+        <DayStrip v-model="from" :duration="duration" :load="floorLoad" label="Meeting time" />
 
         <div class="rb__durations">
           <button
@@ -111,22 +103,17 @@
               <span class="rb__kit-item muted">{{ selected.wing }} facade</span>
             </div>
 
-            <!-- The day, drawn to scale. Clicking it moves the requested slot -->
-            <div class="rb__timeline" @click="scrub">
-              <div
-                v-for="(interval, index) in dayOf[selected.id]"
-                :key="index"
-                class="rb__block"
-                :class="{ mine: isMine(selected.id, interval) }"
-                :style="spanStyle(interval)"
-                :title="fmtRange(interval)"
+            <!-- The same control as above, now carrying this room's day. Drag
+                 the window to move the meeting; the floor repaints with it -->
+            <div class="rb__day">
+              <DayStrip
+                v-model="from"
+                :duration="duration"
+                :busy="dayOf[selected.id]"
+                :mine="myBookingsIn(selected.id)"
+                :state="requestClass"
+                :label="`Meeting time in ${selected.title}`"
               />
-              <div class="rb__request" :class="requestClass" :style="spanStyle(slot)" />
-            </div>
-            <div class="rb__ticks">
-              <span v-for="hour in TICKS" :key="hour" :style="{ left: pct(hour * 60) + '%' }">
-                {{ hour }}
-              </span>
             </div>
 
             <div class="rb__actions">
@@ -173,6 +160,7 @@ import { Svgic } from '@svgic/core'
 import { ZoomPlugin } from '@svgic/core/plugins/zoom'
 import type { ZoomPluginInstance } from '@svgic/core/plugins/zoom'
 import { ContentPlugin } from '@svgic/core/plugins/content'
+import DayStrip from './DayStrip.vue'
 import {
   ROOMS,
   SCHEDULE,
@@ -214,8 +202,6 @@ const LEGEND = [
   { state: 'mine', label: 'Booked by you' },
   { state: 'off', label: 'Filtered out' },
 ]
-
-const TICKS = [8, 10, 12, 14, 16, 18, 20]
 
 const containerRef = ref<HTMLElement>()
 const from = ref(11 * 60 + 30)
@@ -261,8 +247,8 @@ const statusFor = (room: Room) => statusOf(dayOf.value[room.id]!, from.value, du
 const overlapsSlot = (interval: Interval): boolean =>
   interval[0] < slot.value[1] && slot.value[0] < interval[1]
 
-const isMine = (id: string, interval: Interval): boolean =>
-  bookings.value.some((b) => b.room === id && b.slot[0] === interval[0] && b.slot[1] === interval[1])
+const myBookingsIn = (id: string): Interval[] =>
+  bookings.value.filter((b) => b.room === id).map((b) => b.slot)
 
 const selected = computed(() => ROOMS.find((room) => room.id === selectedId.value) ?? null)
 
@@ -278,6 +264,30 @@ const listed = computed(() => {
 const freeCount = computed(
   () => ROOMS.filter((room) => matches(room) && statusFor(room) === 'free').length,
 )
+
+/**
+ * How much of the floor is taken, slot by slot, over the whole day.
+ *
+ * Drawn behind the day strip so the shape of the day is visible before anything
+ * is clicked: it answers "when is there anything at all" without making the
+ * visitor drag around looking for it. Filters narrow it, because the question is
+ * always about the rooms that would actually do.
+ */
+const floorLoad = computed(() => {
+  const pool = ROOMS.filter(matches)
+  const slots = (DAY_END - DAY_START) / SLOT
+
+  return Array.from({ length: slots }, (_, index) => {
+    if (!pool.length) return 0
+
+    const at = DAY_START + index * SLOT
+    const taken = pool.filter((room) =>
+      dayOf.value[room.id]!.some(([start, end]) => at >= start && at < end),
+    ).length
+
+    return taken / pool.length
+  })
+})
 
 const dotClass = (room: Room) => (matches(room) ? statusFor(room) : 'off')
 
@@ -523,28 +533,11 @@ const copyLink = async () => {
 
 // ---------------------------------------------------------------- timeline
 
-const pct = (minute: number) => ((minute - DAY_START) / (DAY_END - DAY_START)) * 100
-
-const spanStyle = ([start, end]: Interval) => ({
-  left: `${pct(start)}%`,
-  width: `${pct(end) - pct(start)}%`,
-})
-
 const requestClass = computed(() => {
   if (myBookingHere.value) return 'mine'
 
   return canBook.value ? 'ok' : 'clash'
 })
-
-/** Clicking the day moves the requested slot to where you clicked */
-const scrub = (event: MouseEvent) => {
-  const box = (event.currentTarget as HTMLElement).getBoundingClientRect()
-  const ratio = (event.clientX - box.left) / box.width
-  const raw = DAY_START + ratio * (DAY_END - DAY_START)
-  const snapped = Math.round(raw / SLOT) * SLOT
-
-  from.value = Math.min(DAY_END - duration.value, Math.max(DAY_START, snapped))
-}
 
 // --------------------------------------------------------------- lifecycle
 
@@ -724,10 +717,11 @@ onUnmounted(() => {
 @media (max-width: 720px) {
   .rb__when { grid-template-columns: 1fr; gap: 8px; }
 }
-.rb__clock { display: flex; flex-direction: column; }
+/* Fixed width: the readout shrinks by a character as the count drops, and an
+   auto column would resize the strip next to it while it is being dragged */
+.rb__clock { display: flex; flex-direction: column; min-width: 132px; }
 .rb__clock strong { font-size: 17px; font-family: var(--vp-font-family-mono); }
 .rb__clock span { font-size: 11.5px; color: var(--vp-c-text-3); }
-.rb__slider { width: 100%; accent-color: var(--vp-c-brand-1); }
 .rb__durations { display: flex; gap: 6px; }
 .rb__durations button {
   padding: 5px 10px;
@@ -812,42 +806,7 @@ onUnmounted(() => {
 .rb__kit-item { display: inline-flex; align-items: center; gap: 5px; }
 .rb__kit-item.muted { color: var(--vp-c-text-3); }
 
-.rb__timeline {
-  position: relative;
-  height: 26px;
-  border-radius: 6px;
-  background: var(--vp-c-bg-mute);
-  overflow: hidden;
-  cursor: crosshair;
-}
-.rb__block {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  background: var(--dot-busy);
-  opacity: 0.55;
-  border-right: 1px solid var(--vp-c-bg-soft);
-}
-.rb__block.mine { background: var(--dot-mine); opacity: 0.8; }
-.rb__request {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border: 2px solid var(--vp-c-text-1);
-  border-radius: 4px;
-  pointer-events: none;
-}
-.rb__request.ok { border-color: var(--dot-free); }
-.rb__request.clash { border-color: var(--dot-busy); }
-.rb__request.mine { border-color: var(--dot-mine); }
-.rb__ticks { position: relative; height: 15px; margin-bottom: 10px; }
-.rb__ticks span {
-  position: absolute;
-  transform: translateX(-50%);
-  font-size: 10px;
-  font-family: var(--vp-font-family-mono);
-  color: var(--vp-c-text-3);
-}
+.rb__day { margin-bottom: 10px; }
 
 .rb__actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .rb__actions button {
