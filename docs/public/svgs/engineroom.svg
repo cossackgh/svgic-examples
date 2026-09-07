@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" class="mimic">
+  <style>
+    .mimic {
+      --m-bg: #eef1f7; --m-deck: #e3e8f1; --m-line: #8e9bb5; --m-hair: #b9c2d5;
+      --m-ink: #38415a; --m-mute: #7f8aa5; --m-unit: #ffffff; --m-mark: #6d7893;
+      --m-pipe: #b6bfd2; --m-accent: #2f6df6; --m-on-accent: #ffffff;
+      --m-run: #2f9e5a; --m-warn: #cf8a28; --m-alarm: #cf3b3b; --m-shut: #9aa4bb;
+      --m-sea: #cddcea;
+    }
+    :root.dark .mimic {
+      --m-bg: #12121c; --m-deck: #1a1a29; --m-line: #6b6b9c; --m-hair: #3d3d63;
+      --m-ink: #d8dbee; --m-mute: #939ac0; --m-unit: #23233a; --m-mark: #8f97bd;
+      --m-pipe: #3d3d63; --m-accent: #7b97ff; --m-on-accent: #10101a;
+      --m-run: #4cbd7d; --m-warn: #d9a24a; --m-alarm: #e56a6a; --m-shut: #5c6484;
+      --m-sea: #1b2b3d;
+    }
+    .bg { fill: var(--m-bg); }
+    .sea { fill: var(--m-sea); }
+    .deck { fill: none; stroke: var(--m-hair); stroke-width: 1.6; stroke-dasharray: 8 7; }
+    .tag {
+      font: 500 11px/1 var(--vp-font-family-mono, ui-monospace), monospace;
+      fill: var(--m-mute); text-anchor: middle;
+    }
+    .label {
+      font: 600 11px/1 system-ui, sans-serif; fill: var(--m-mute);
+      text-anchor: middle; letter-spacing: 0.14em;
+    }
+    /*
+     * Everything the application repaints is declared through :where(), so the
+     * defaults carry zero specificity. A plain "#pipes path" rule would be
+     * (1,0,1) and would quietly beat the class the library puts on a highlighted
+     * element, leaving setHighlight() with nothing to show for itself.
+     */
+    :where(#pipes) :where(.pipe) {
+      fill: none; stroke: var(--m-pipe); stroke-width: 7;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    :where(#equipment) :where(g) > :where(rect, circle, path) {
+      fill: var(--m-unit); stroke: var(--m-line); stroke-width: 2;
+    }
+    :where(#equipment) :where(g) > :where(.unit-mark) {
+      fill: none; stroke: var(--m-mark); stroke-width: 2;
+    }
+    :where(#readouts) :where(.readout) {
+      fill: var(--m-unit); stroke: var(--m-line); stroke-width: 1.6;
+    }
+    /*
+     * Motion belongs to the file, colour to the config: the library says which
+     * pipes are flowing by adding a class, and the dashes are this drawing's
+     * own way of showing it.
+     */
+    @keyframes mimic-flow { to { stroke-dashoffset: -28; } }
+    :where(#pipes) .svgic-state-flow {
+      stroke-dasharray: 16 12;
+      animation: mimic-flow 0.9s linear infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :where(#pipes) .svgic-state-flow { animation: none; }
+    }
+  </style>
+
+  <g id="background">
+    <rect class="bg" width="1600" height="900" />
+    <rect class="sea" y="828" width="1600" height="72" />
+    <path class="deck" d="M40 40 H1560 V828 H40 Z" />
+    <text class="label" x="100" y="590">SEA CHESTS</text>
+    <text class="label" x="380" y="590">SW COOLING PUMPS</text>
+    <text class="label" x="570" y="660">SW STRAINER</text>
+    <text class="label" x="840" y="448">CENTRAL COOLER</text>
+    <text class="label" x="1120" y="662">OVERBOARD</text>
+    <text class="label" x="300" y="528">LT COOLING PUMPS</text>
+    <text class="label" x="640" y="56">EXPANSION TANK</text>
+    <text class="label" x="1280" y="140">MAIN ENGINE</text>
+    <text class="label" x="1020" y="546">3-WAY CONTROL</text>
+    <text class="tag" x="120" y="494">Sea water</text>
+    <text class="tag" x="400" y="530">SW pressure</text>
+    <text class="tag" x="570" y="812">Strainer ΔP</text>
+    <text class="tag" x="860" y="664">SW flow</text>
+    <text class="tag" x="300" y="244">LT pressure</text>
+    <text class="tag" x="880" y="274">ME inlet</text>
+    <text class="tag" x="700" y="124">ME outlet</text>
+    <text class="tag" x="1180" y="444">To cooler</text>
+    <text class="tag" x="1280" y="364">ME load</text>
+  </g>
+
+  <g id="pipes">
+    <path id="pipe-sea-a" class="pipe " d="M130 640 H195" />
+    <path id="pipe-sea-b" class="pipe " d="M130 780 H195" />
+    <path id="pipe-sw-suction" class="pipe " d="M225 640 H280 M225 780 H280 M280 640 V780 M280 710 H354" />
+    <path id="pipe-sw-discharge" class="pipe " d="M406 640 H470 M406 780 H470 M470 640 V780 M470 710 H544" />
+    <path id="pipe-sw-cooler" class="pipe " d="M596 710 H700 V570 H740" />
+    <path id="pipe-sw-overboard" class="pipe " d="M940 570 H1000 V710 H1105" />
+    <path id="pipe-sw-sea" class="pipe " d="M1135 710 H1330" />
+    <path id="pipe-fw-suction" class="pipe " d="M200 200 V470 M200 350 H274 M200 470 H274" />
+    <path id="pipe-fw-discharge" class="pipe " d="M326 350 H400 M326 470 H400 M400 350 V470 M400 410 H560" />
+    <path id="pipe-fw-bypass" class="pipe " d="M560 410 H1020 V470" />
+    <path id="pipe-fw-cooler-in" class="pipe " d="M560 410 V500 H740" />
+    <path id="pipe-fw-cooler-out" class="pipe " d="M940 500 H1020" />
+    <path id="pipe-fw-engine" class="pipe " d="M1020 500 V270 H1080" />
+    <path id="pipe-fw-return" class="pipe " d="M1080 200 H200" />
+    <path id="pipe-exp" class="pipe " d="M640 132 V200" />
+  </g>
+
+  <g id="equipment">
+    <g id="sea-a" class="unit">
+      <path d="M70 618 H126 V662 H70 Z" />
+      <path class="unit-mark" d="M78 626 V654 M90 626 V654 M102 626 V654" />
+    </g>
+
+    <g id="sea-b" class="unit">
+      <path d="M70 758 H126 V802 H70 Z" />
+      <path class="unit-mark" d="M78 766 V794 M90 766 V794 M102 766 V794" />
+    </g>
+
+    <g id="v-sea-a" class="unit">
+      <path d="M195 627 V653 L225 627 V653 Z" />
+    </g>
+
+    <g id="v-sea-b" class="unit">
+      <path d="M195 767 V793 L225 767 V793 Z" />
+    </g>
+
+    <g id="p-sw-1" class="unit" transform="rotate(0 380 640)">
+      <circle cx="380" cy="640" r="26" />
+      <path d="M372 625 L400 640 L372 655 Z" class="unit-mark" />
+    </g>
+
+    <g id="p-sw-2" class="unit" transform="rotate(0 380 780)">
+      <circle cx="380" cy="780" r="26" />
+      <path d="M372 765 L400 780 L372 795 Z" class="unit-mark" />
+    </g>
+
+    <g id="f-sw" class="unit">
+      <rect x="544" y="690" width="52" height="40" rx="5" />
+      <path class="unit-mark" d="M556 696 L584 724 M584 696 L556 724" />
+    </g>
+
+    <g id="hx" class="unit">
+      <rect x="740" y="470" width="200" height="130" rx="8" />
+      <path class="unit-mark" d="M764 496 H916 M764 522 H916 M764 548 H916" />
+    </g>
+
+    <g id="v-ob" class="unit">
+      <path d="M1105 697 V723 L1135 697 V723 Z" />
+    </g>
+
+    <g id="p-fw-1" class="unit" transform="rotate(0 300 350)">
+      <circle cx="300" cy="350" r="26" />
+      <path d="M292 335 L320 350 L292 365 Z" class="unit-mark" />
+    </g>
+
+    <g id="p-fw-2" class="unit" transform="rotate(0 300 470)">
+      <circle cx="300" cy="470" r="26" />
+      <path d="M292 455 L320 470 L292 485 Z" class="unit-mark" />
+    </g>
+
+    <g id="v-3w" class="unit">
+      <path d="M1005 487 V513 L1035 487 V513 Z
+               M1007 487 H1033 L1020 470 Z" />
+    </g>
+
+    <g id="tank-exp" class="unit">
+      <rect x="580" y="68" width="120" height="64" rx="10" />
+      <path class="unit-mark" d="M588 106 H692" />
+    </g>
+
+    <g id="eng" class="unit">
+      <rect x="1080" y="160" width="400" height="160" rx="10" />
+      <rect class="unit-mark" x="1122" y="186" width="36" height="52" rx="4" />
+      <rect class="unit-mark" x="1180" y="186" width="36" height="52" rx="4" />
+      <rect class="unit-mark" x="1238" y="186" width="36" height="52" rx="4" />
+      <rect class="unit-mark" x="1296" y="186" width="36" height="52" rx="4" />
+      <rect class="unit-mark" x="1354" y="186" width="36" height="52" rx="4" />
+      <rect class="unit-mark" x="1412" y="186" width="36" height="52" rx="4" />
+    </g>
+  </g>
+
+  <g id="readouts">
+    <rect id="ri-sea" class="readout" x="66" y="501" width="108" height="38" rx="7" />
+    <rect id="ri-sw-p" class="readout" x="346" y="537" width="108" height="38" rx="7" />
+    <rect id="ri-dp" class="readout" x="516" y="819" width="108" height="38" rx="7" />
+    <rect id="ri-sw-f" class="readout" x="806" y="671" width="108" height="38" rx="7" />
+    <rect id="ri-fw-p" class="readout" x="246" y="251" width="108" height="38" rx="7" />
+    <rect id="ri-t-in" class="readout" x="826" y="281" width="108" height="38" rx="7" />
+    <rect id="ri-t-out" class="readout" x="646" y="131" width="108" height="38" rx="7" />
+    <rect id="ri-mix" class="readout" x="1126" y="451" width="108" height="38" rx="7" />
+    <rect id="ri-load" class="readout" x="1226" y="371" width="108" height="38" rx="7" />
+  </g>
+</svg>
