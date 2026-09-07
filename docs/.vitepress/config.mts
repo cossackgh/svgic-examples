@@ -11,7 +11,13 @@ export default defineConfig({
 
   themeConfig: {
     nav: [
-      { text: 'Showcase', link: '/showcase/mall' },
+      {
+        text: 'Showcase',
+        items: [
+          { text: 'Mall directory', link: '/showcase/mall' },
+          { text: 'Meeting rooms', link: '/showcase/rooms' },
+        ],
+      },
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Examples', link: '/examples/basic' },
       { text: 'Library →', link: 'https://github.com/cossackgh/client-svg-schemas' },
