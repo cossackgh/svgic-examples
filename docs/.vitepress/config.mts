@@ -17,6 +17,7 @@ export default defineConfig({
           { text: 'Mall directory', link: '/showcase/mall' },
           { text: 'Meeting rooms', link: '/showcase/rooms' },
           { text: 'Theatre seats', link: '/showcase/theatre' },
+          { text: 'Engine room', link: '/showcase/engine-room' },
         ],
       },
       { text: 'Getting Started', link: '/getting-started' },
