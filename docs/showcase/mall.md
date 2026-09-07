@@ -23,8 +23,11 @@ Three floors, 49 tenants, search that jumps to the shop and zooms in on it. The 
 | **Binding** | each `<path id="u-101">` in the SVG is matched to a record by `id`; nothing about the tenants is stored in the file |
 | **Labels** | `ContentPlugin` places names inside the shapes and swaps in a logo where it fits, a shortened name where it does not, and the unit number as a last resort |
 | **Zoom** | `ZoomPlugin` handles wheel, drag and pinch, and `focusElement()` flies to the shop picked in the list |
+| **Hover** | a `render` callback builds the directory entry — the logo the plan may have had no room for, the category, the level, the hours. `placement: 'cursor'`, so it travels with the pointer the way a tooltip on a map does |
 | **Highlight** | `setHighlight('found', [id])` paints the match — the style lives in config, not in the SVG |
 | **Floors** | `setSrc()` swaps the plan and keeps the same client, subscriptions and plugins |
+
+The popup is mounted on `document.body` by the library, which is why its styles live in a plain `<style>` block rather than a scoped one.
 
 Everything else on this page — the search box, the result list, the card — is ordinary Vue. The library draws the map and tells you what was clicked; the product around it stays yours.
 

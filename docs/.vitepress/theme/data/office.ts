@@ -31,10 +31,18 @@ export const SLOT = 30
 
 export type Interval = [start: number, end: number]
 
+/**
+ * Number as it is printed on the door.
+ *
+ * Booths are numbered apart: stripping the letter would give `r-601` and
+ * `b-601` the same "6.01", and a booth has no door number to share anyway.
+ */
 const unitOf = (id: string): string => {
-  const n = id.replace(/^\w-/, '')
+  const [prefix, number] = id.split('-') as [string, string]
 
-  return `${n[0]}.${n.slice(1)}`
+  if (prefix === 'b') return `P-${number.slice(1)}`
+
+  return `${number[0]}.${number.slice(1)}`
 }
 
 const room = (
