@@ -22,10 +22,13 @@ One floor, twenty rooms and four phone booths. Drag the meeting along the day an
 |---|---|
 | **Status** | six calls to `setHighlight()` paint the floor — `free`, `soon`, `busy`, `off`, `mine`, `picked`. The component decides which room goes in which list; the colours live in the plan and in the style config |
 | **Order** | state rules share one specificity, so a state listed later in `states` wins on the properties it sets. `picked` sets only a stroke, which is why a selected room keeps the colour of its availability |
-| **Hover** | every room always carries a state, so the plain `hover` rule can never apply. `highlightedHover` is the one that does — it matches two classes, and outranks any single state |
+| **Hover** (1) | every room always carries a state, so the plain `hover` rule can never apply. `highlightedHover` is the one that does — it matches two classes, and outranks any single state |
 | **Labels** | `ContentPlugin` writes name, capacity and the next change into each shape — all three lines fit in every room on this floor, and the chain behind them falls back to two lines, then one, then the room number when a shape cannot take them. The booths run a second instance of the plugin, at a larger font and a name only |
 | **Live data** | dragging the meeting calls `setData()`; the plugin redraws every label from the new records through the `onDataChange` hook |
+| **Hover** (2) | the popup is a `render` callback in the client config. It is built at hover time, so it reads the requested slot as it stands — status, kit, and when the room next frees up |
 | **Zoom** | `ZoomPlugin` handles wheel, drag and pinch; `focusElement()` flies to the room picked in the list |
+
+The popup is anchored to the shape (`placement: 'element'`), so it sits above the room and follows it through a pan or a zoom — the library repositions it on the schema's own `viewchange`. It is mounted on `document.body`, which is why its styles live in a plain `<style>` block: a scoped rule would never reach it.
 
 The booking itself is ordinary Vue — a list of intervals, a strip of divs, a button. The library draws the floor and reports what was clicked.
 
