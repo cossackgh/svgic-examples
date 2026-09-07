@@ -87,8 +87,10 @@
           <template v-if="selected">
             <div class="rb__card-head">
               <strong>{{ selected.title }}</strong>
-              <span class="rb__chip">Room {{ selected.unit }}</span>
-              <span class="rb__chip">{{ selected.seats }} seats</span>
+              <span class="rb__chip">
+                {{ selected.kind === 'booth' ? 'Phone booth' : `Room ${selected.unit}` }}
+              </span>
+              <span class="rb__chip">{{ selected.seats }} {{ selected.seats === 1 ? 'seat' : 'seats' }}</span>
               <button class="rb__link" @click="copyLink">
                 {{ copied ? 'Link copied' : 'Copy link' }}
               </button>
@@ -399,7 +401,7 @@ const renderPopup = (item: SvgicItem): HTMLElement => {
   // also collide with the meeting room that carries that number
   const meta =
     room.kind === 'booth'
-      ? `1 seat · Phone booth · ${room.wing.toLowerCase()} corridor`
+      ? `${room.seats} ${room.seats === 1 ? 'seat' : 'seats'} · Phone booth · ${room.wing.toLowerCase()} corridor`
       : `${room.seats} seats · Room ${room.unit} · ${room.wing} facade`
 
   line(box, 'rb-pop__meta', meta)

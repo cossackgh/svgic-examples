@@ -21,6 +21,19 @@ export interface Tenant extends SvgicItem {
   hours?: string
 }
 
+/**
+ * Unit number as it is printed on the door.
+ *
+ * Anchors and kiosks keep their letter: a plain number would give `a-101`,
+ * `u-101` and `k-101` the same "101" on one floor, and a unit number that three
+ * tenants share is not a unit number.
+ */
+const unitOf = (id: string): string => {
+  const [prefix, number] = id.split('-') as [string, string]
+
+  return prefix === 'u' ? number : `${prefix.toUpperCase()}-${number}`
+}
+
 const t = (
   id: string,
   title: string,
@@ -32,7 +45,7 @@ const t = (
   title,
   level,
   category,
-  unit: id.replace(/^[auk]-/, ''),
+  unit: unitOf(id),
   hours: '10:00 — 22:00',
   ...extra,
 })
